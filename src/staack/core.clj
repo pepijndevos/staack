@@ -4,6 +4,9 @@
 (def stack (list))
 ; ????
 
+(defn thrush [& fns]
+  (reduce #(%2 %1) fns))
+
 (defn ctake
   "Like take, but generic"
   [n coll]
@@ -20,43 +23,44 @@
 
 (def csplit (juxt ctake cdrop))
 
+(defn nth-stack [n f]
+  #(apply update-in % [n] f %&))
+
 (defn confn
   "Turn a clojure function into a concatenative one"
-  ([f arity]
+  [f arity]
+  (nth-stack 0
     #(let [[h t] (csplit arity %)]
-      (conj t (apply f h))))
-  ([stack f arity]
-    ((confn f arity) stack)))
+      (conj t (apply f h)))))
 
-(defn lit
-  ([v]
-    #(conj % v))
-  ([stack v]
-    (conj stack v)))
+(defn lit [v]
+  (nth-stack 0 #(conj % v)))
 
-(defn block* [& words]
-  (fn [stack] (reduce #(%2 %1) stack words)))
-
-(defn block [stack & words]
-  (conj stack (apply block* words)))
+(defn block [& words]
+  #(apply trush % words))
 
 (defmacro defblock [name & words]
-  `(def ~name (block* ~@words)))
+  `(def ~name (block ~@words)))
 
-(defn cwhen [stack]
-  (let [[[bl con] tail] (csplit 2 stack)]
-    (if con
-      (bl tail)
-      tail)))
+; exapmle functions
+; these use a data stack, a control stack and a queue??
 
-(defn cif [stack]
-  (let [[[bl2 bl con] tail] (csplit 3 stack)]
-    (if con
-      (bl  tail)
-      (bl2 tail))))
+(defn >r [[data control & other]]
+  (apply vector
+    (pop data)
+    (conj control (peek data))
+    other))
 
-(defn dup [stack]
-  (conj stack (peek stack)))
+(defn <r [[data control & other]]
+  (apply vector
+    (conj data (peek control))
+    (pop control)
+    other))
+
+(def dup
+  (nth-stack 0
+    (fn [stack]
+      (conj stack (peek stack)))))
 
 (def c+ (confn + 2))
 (def c- (confn - 2))
