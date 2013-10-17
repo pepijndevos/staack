@@ -8,9 +8,7 @@
   (next [_] nil)
   (cons [_ o] (popfn o stack))
   clojure.lang.Seqable
-  (seq [_] nil)
-  clojure.lang.Counted
-  (count [_] -1))
+  (seq [_] nil))
 
 (defn negative-stack? [s]
   (instance? NegStack s)) 
