@@ -11,7 +11,7 @@
   #(conj % v))
 
 (defn block [& words]
-  #(apply trush % words))
+  #(apply thrush % words))
 
 (defmacro defblock [name & words]
   `(def ~name (block ~@words)))

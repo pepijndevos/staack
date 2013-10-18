@@ -1,4 +1,4 @@
-(ns staack.parallel)
+(ns staack.dataflow)
 
 (deftype NegStack [popfn stack]
   clojure.lang.ISeq
@@ -23,6 +23,3 @@
   (if (> n 0)
     (mpeek stack #(concall %2 (partial f %1) (dec n)))
     (conj stack (f))))
-
-(defn thrush [fns]
-  (reduce (fn [a b] (b a)) () fns))

@@ -1,12 +1,5 @@
 (ns staack.multi)
 
-(def queue (clojure.lang.PersistentQueue/EMPTY))
-(def stack (list))
-; ????
-
-(defn thrush [& fns]
-  (reduce #(%2 %1) fns))
-
 (defn ctake
   "Like take, but generic"
   [n coll]
@@ -36,14 +29,7 @@
 (defn lit [v]
   (nth-stack 0 #(conj % v)))
 
-(defn block [& words]
-  #(apply trush % words))
-
-(defmacro defblock [name & words]
-  `(def ~name (block ~@words)))
-
-; exapmle functions
-; these use a data stack, a control stack and a queue??
+; exapmle functions using a data stack and a control stack
 
 (defn >r [[data control & other]]
   (apply vector
