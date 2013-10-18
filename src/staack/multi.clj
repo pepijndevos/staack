@@ -1,4 +1,4 @@
-(ns staack.core)
+(ns staack.multi)
 
 (def queue (clojure.lang.PersistentQueue/EMPTY))
 (def stack (list))
